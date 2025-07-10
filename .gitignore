@@ -1,0 +1,32 @@
+# IDE and system files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Build system and caches
+.gradle/
+build/
+**/build/
+local.properties
+captures/
+.cxx/
+.externalNativeBuild/
+
+# Gradle caches and tmp folders (new)
+**/.tmp/
+**/caches/
+
+# Kotlin/Multiplatform cache
+.kotlin/
+
+# iOS-specific
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
