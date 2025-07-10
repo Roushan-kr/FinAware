@@ -68,11 +68,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.firebase.auth)
+
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation(libs.firebase.firestore.ktx)
     debugImplementation(compose.uiTooling)
     implementation("androidx.compose.material:material-icons-extended:<compose_version>")
     // Compose
@@ -89,5 +88,10 @@ dependencies {
 // Coroutines (shared logic)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
+// FIREBASE
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation("com.google.firebase:firebase-auth")
 
+// UI
+    implementation("androidx.compose.material3:material3:1.2.1")
 }

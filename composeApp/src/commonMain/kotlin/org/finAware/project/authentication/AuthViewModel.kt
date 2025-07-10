@@ -1,23 +1,22 @@
 package org.finAware.project.authentication
 
 import AuthService
+import AuthServiceImpl
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val authService: AuthService = AuthServiceImpl()) : ViewModel() {
+    private val authService: AuthService
+) : ViewModel() {
 
-    // Explicit type: currentUser is a flow of nullable User
     val currentUser: StateFlow<FirebaseUser?> = authService.currentUser
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    // isAuthenticated is true if currentUser is not null
     val isAuthenticated: StateFlow<Boolean> = currentUser
-        .map { user -> user != null }
+        .map { it != null }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     fun login(email: String, password: String, onError: (String) -> Unit) {
@@ -44,5 +43,29 @@ class AuthViewModel(
         viewModelScope.launch {
             authService.signOut()
         }
+    }
+
+    fun startPhoneAuth(
+        phone: String,
+        onCodeSent: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        (authService as? AuthServiceImpl)?.startPhoneVerification(
+            phone,
+            onCodeSent,
+            { onError(it.message ?: "Phone verification failed") }
+        )
+    }
+
+    fun verifyOtp(
+        otp: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        (authService as? AuthServiceImpl)?.verifyPhoneCode(
+            otp,
+            onSuccess,
+            { onError(it.message ?: "OTP verification failed") }
+        )
     }
 }
