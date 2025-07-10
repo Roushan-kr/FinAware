@@ -22,6 +22,9 @@ fun SignUpScreen(
     var password by remember { mutableStateOf("") }
     var otp by remember { mutableStateOf("") }
 
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var otpSent by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,11 +32,9 @@ fun SignUpScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(
-            text = "Sign Up",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
+        Text("Sign Up", style = MaterialTheme.typography.headlineMedium)
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = name,
@@ -70,43 +71,45 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(it, color = MaterialTheme.colorScheme.error)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                onSignUpClick(name, email, phone, password)
+                onSignUpClick(email, password, phone, name)
+                otpSent = true
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Sign Up")
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        if (otpSent) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Enter OTP sent to your phone",
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+            Text("Enter OTP sent to your phone")
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = otp,
-            onValueChange = { otp = it },
-            label = { Text("OTP") },
-            modifier = Modifier.fillMaxWidth()
-        )
+            OutlinedTextField(
+                value = otp,
+                onValueChange = { otp = it },
+                label = { Text("OTP") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Button(
-            onClick = {
-                onVerifyOtpClick(otp)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Verify OTP")
+            Button(
+                onClick = { onVerifyOtpClick(otp) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Verify OTP")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -117,15 +120,21 @@ fun SignUpScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SignUpPreview() {
     MaterialTheme {
         Surface {
             SignUpScreen(
-                onSignUpClick = { _, _, _, _ -> },
-                onVerifyOtpClick = {},
-                onBack = {}
+                onSignUpClick = { name, email, phone, password ->
+                    println("Preview sign-up clicked: $name, $email, $phone, $password")
+                },
+                onVerifyOtpClick = { otp ->
+                    println("Preview OTP verify: $otp")
+                },
+                onBack = {
+                    println("Preview back clicked")
+                }
             )
         }
     }
